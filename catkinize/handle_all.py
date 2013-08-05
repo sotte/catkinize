@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import sys
 from handle_manifest import handle_manifest
 
@@ -20,8 +22,9 @@ if __name__ == "__main__":
                 )
     if not possible:
         print("Errors occured, aborting.")
+        sys.exit(-1)
 
-    if confirm('Continue?'):
+    if confirm("Continue? [y/n]", "y"):
         handle_manifest(package_path, version, dryrun=False)
         # handle_cmake(package_path, version, dryrun=False)
         # handle_make(package_path, version, dryrun=False)

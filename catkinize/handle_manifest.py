@@ -51,8 +51,7 @@ def handle_manifest(package_path, version, dryrun=True):
     manifest_xml_path = get_manifest_path(package_path)
     package_xml_path = get_package_xml_path(package_path)
 
-    os.path.basename
-    # guards
+    # GUARDS
     if not os.path.exists(manifest_xml_path):
         print("manifest.xml does not exits")
         return False
