@@ -64,6 +64,8 @@ def handle_manifest(package_path, version, dryrun=True):
     # get all fields
     with open(manifest_xml_path) as f:
         fields = get_fields_from_manifest(f)
+    fields["package_name"] = package_name
+    fields["version"] = version
 
     # create manifest_xml_str
     print("package.xml:")
