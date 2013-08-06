@@ -75,17 +75,17 @@ def handle_manifest(package_path, version, dryrun=True):
     fields["version"] = version
     for k in fields:
         print("%s --> %s" % (k, fields[k]))
-    return False
+    print()
 
     # create manifest_xml_str
     print("package.xml:")
-    manifest_xml_str = create_package_xml_str(fields)
+    package_xml_str = create_package_xml_str(fields)
 
     # writing package.xml
     print("writing package.xml...")
     if not dryrun:
-        with open(manifest_xml_path, "w") as f:
-            f.write(manifest_xml_str)
+        with open(package_xml_path, "w") as f:
+            f.write(package_xml_str)
     print("Done")
 
     return True
