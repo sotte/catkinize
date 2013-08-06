@@ -141,7 +141,8 @@ def get_fields_from_manifest(manifest_xml_path):
         "website_url": get_website_url(manifest),
         "maintainers": get_maintainers(manifest),
         "depends": get_depend(manifest),
-        "exports": get_exports(manifest)
+        "exports": get_exports(manifest),
+        "bugtracker_url": "",
     }
     return fields
 
