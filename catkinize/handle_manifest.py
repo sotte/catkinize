@@ -78,7 +78,6 @@ def handle_manifest(package_path, version, dryrun=True):
     print()
 
     # create manifest_xml_str
-    print("package.xml:")
     package_xml_str = create_package_xml_str(fields)
 
     # writing package.xml
@@ -106,12 +105,11 @@ def create_package_xml_str(fields):
     subs['bugtracker_part'] = indent(bugtracker_part)
 
     subs['authors_part'] = make_section('author', fields["authors"])
-    subs['build_depends_part'] = make_section('build_depend', fields["build_depends"])
-    subs['run_depends_part'] = make_section('run_depend', fields["run_depends"])
-    subs['test_depends_part'] = make_section('test_depend',
-                                             fields["test_depends"])
-    subs['replaces_part'] = make_section('replace', fields["replaces"])
-    subs['conflicts_part'] = make_section('conflict', fields["conflicts"])
+    subs['build_depends_part'] = make_section('build_depend', fields["depends"])
+    subs['run_depends_part'] = make_section('run_depend', fields["depends"])
+    subs['test_depends_part'] = make_section('test_depend', fields["depends"])
+    subs['replaces_part'] = None  # TODO make_section('replace', fields["replaces"])
+    subs['conflicts_part'] = None  # TODO make_section('conflict', fields["conflicts"])
     subs['version'] = fields["version"]
     subs['package_name'] = fields["package_name"]
     subs['description'] = fields["description"]
