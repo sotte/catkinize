@@ -49,6 +49,8 @@ PACKAGE_TEMPLATE = """\
 
 
 ##############################################################################
+# MAIN LOGIC
+##############################################################################
 def handle_manifest(package_path, version, dryrun=True):
     """Convert the package.xml to a catkinized manifest.xml file.
 
@@ -117,7 +119,6 @@ def create_package_xml_str(fields):
         fields["architecture_independent"],
         fields["metapackage"]
     )
-
     return PACKAGE_TEMPLATE % subs
 
 
@@ -143,6 +144,8 @@ def get_fields_from_manifest(manifest_xml_path):
     return fields
 
 
+##############################################################################
+# Get fields from manifest.xml
 ##############################################################################
 def get_exports(manifest):
     export_tags = xml_lib.xml_find(manifest, 'export').getchildren()
@@ -181,6 +184,7 @@ def get_authors_field(manifest):
     """Extract author names and email addresses from free-form text in the
     <author> tag of manifest.xml.
 
+    TODO fix unittests
     #>>> get_authors_field('Alice/alice@somewhere.bar, Bob')
     #[('Alice', {'email': 'alice@somewhere.bar'}), 'Bob']
     #>>> get_authors_field(None)
@@ -201,6 +205,9 @@ def get_authors_field(manifest):
     return authors
 
 
+##############################################################################
+# XML formating
+# TODO why don't we use the xml package to create the xml files?
 ##############################################################################
 def make_section(tag_name, rows):
     """Make a string in XML format for a section with a given tag name."""
@@ -249,7 +256,7 @@ def indent(strg, amount=1):
 
 
 ##############################################################################
-# Utility functions
+# PATH and FILE related functions
 ##############################################################################
 def get_package_name(package_path):
     """Return the package name for the given package_path.
