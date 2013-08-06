@@ -1,3 +1,10 @@
+"""
+TODO write doc
+
+TODO Extract all doctest to proper unittests.
+"""
+
+##############################################################################
 from __future__ import print_function
 
 # standard library imports
@@ -19,7 +26,9 @@ PACKAGE_TEMPLATE = """\
 <package>
   <name>%(package_name)s</name>
   <version>%(version)s</version>
-  <description>%(description)s</description>
+  <description>
+    %(description)s
+  </description>
 %(maintainers_part)s
 %(authors_part)s
 %(licenses_part)s
