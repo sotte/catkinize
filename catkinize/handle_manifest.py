@@ -11,6 +11,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from catkinize import xml_lib
+import utils
 
 
 ##############################################################################
@@ -60,9 +61,9 @@ def handle_manifest(package_path, version, dryrun=True):
 
     TODO: arguments
     """
-    package_name = get_package_name(package_path)
-    manifest_xml_path = get_packg_xml_path(package_path)
-    package_xml_path = get_package_xml_path(package_path)
+    package_name = utils.get_package_name(package_path)
+    manifest_xml_path = utils.get_package_path(package_path)
+    package_xml_path = utils.get_package_xml_path(package_path)
 
     # GUARDS
     if not os.path.exists(manifest_xml_path):
@@ -297,39 +298,3 @@ def space_join(words):
 
 def indent(strg, amount=1):
     return (amount * '  ') + strg
-
-
-##############################################################################
-# PATH and FILE related functions
-##############################################################################
-def get_package_name(package_path):
-    """Return the package name for the given package_path.
-
-    >>> get_package_name("some/path/to/a/package/XYZ_package")
-    'XYZ_package'
-    >>> get_package_name("XYZ_package")
-    'XYZ_package'
-    """
-    return os.path.basename(os.path.abspath(package_path))
-
-
-def get_packg_xml_path(package_path):
-    """Return the path to the manifest.xml file for the given package_path.
-
-    >>> get_packg_xml_path("some/path/to/a/package/XYZ_package")
-    'some/path/to/a/package/XYZ_package/manifest.xml'
-    >>> get_packg_xml_path("XYZ_package")
-    'XYZ_package/manifest.xml'
-    """
-    return os.path.join(package_path, "manifest.xml")
-
-
-def get_package_xml_path(package_path):
-    """Return the path to the package.xml file for the given package_path.
-
-    >>> get_package_xml_path("some/path/to/a/package/XYZ_package")
-    'some/path/to/a/package/XYZ_package/package.xml'
-    >>> get_package_xml_path("XYZ_package")
-    'XYZ_package/package.xml'
-    """
-    return os.path.join(package_path, "package.xml")
