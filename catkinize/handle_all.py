@@ -11,7 +11,7 @@ from utils import is_valid_version
 from utils import confirm
 
 
-if __name__ == "__main__":
+def _catkinize_package():
     # TODO user arsparser
     package_path = sys.argv[1]
     package_name = sys.argv[2]
@@ -39,3 +39,7 @@ if __name__ == "__main__":
 
     else:
         print("You aborted catkinizing.")
+
+
+if __name__ == "__main__":
+    _catkinize_package()
