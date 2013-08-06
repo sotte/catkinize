@@ -6,7 +6,9 @@ from __future__ import print_function
 import sys
 
 from handle_manifest import handle_manifest
+from handle_make import handle_make
 from utils import is_valid_version
+from utils import confirm
 
 
 if __name__ == "__main__":
@@ -22,7 +24,7 @@ if __name__ == "__main__":
     possible = (
         handle_manifest(package_path, version, dryrun=True) and
         # handle_cmake(package_path, version, dryrun=True) and
-        # handle_make(package_path, version, dryrun=True)
+        handle_make(package_path, dryrun=True),
         True
     )
 
@@ -33,7 +35,7 @@ if __name__ == "__main__":
     if confirm("Continue? [y/n]", "y"):
         handle_manifest(package_path, version, dryrun=False)
         # handle_cmake(package_path, version, dryrun=False)
-        # handle_make(package_path, version, dryrun=False)
+        handle_make(package_path, dryrun=False)
 
     else:
         print("You aborted catkinizing.")
