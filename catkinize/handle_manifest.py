@@ -216,6 +216,35 @@ def get_authors_field(manifest):
 
 
 ##############################################################################
+# Make special section in the manifest.xml
+##############################################################################
+def make_bugtrackre_section(bugtracker_url):
+    """Make the bugtracker section.
+
+    >>> make_bugtrackre_section("www.ros.org")
+    '<url type="bugtracker">www.ros.org</url>'
+    >>> make_bugtrackre_section("")
+    '<!-- <url type="bugtracker"></url> -->'
+    """
+    result = '<url type="bugtracker">%s</url>' % bugtracker_url
+    if bugtracker_url == "":
+        result = comment_out(result)
+    return result
+
+
+def make_exports_section(exports, architecture_independent, metapackage):
+    """Make the export section."""
+    parts = [make_empty_tag(name, attrs_dict)
+             for name, attrs_dict in exports]
+    if architecture_independent:
+        parts.append('<architecture_independent/>')
+    if metapackage:
+        parts.append('<metapackage/>')
+    parts = [indent(p, 2) for p in parts]
+    return '\n'.join(parts)
+
+
+##############################################################################
 # XML formating
 # TODO why don't we use the xml package to create the xml files?
 ##############################################################################
@@ -231,7 +260,8 @@ def make_section(tag_name, rows):
 
 
 def make_section_commented(tag_name, rows):
-    r"""
+    r"""Make a string in XML format for a section with a given tag name and
+    comment out each section.
     >>> make_section_commented("test_depend", ["std_msgs"])
     '  <!-- <test_depend>std_msgs</test_depend> -->'
     >>> make_section_commented("test_depend", ["std_msgs", "geo_msgs"])
@@ -239,17 +269,6 @@ def make_section_commented(tag_name, rows):
     """
     return '\n'.join(indent(comment_out(make_tag_from_row(tag_name, row)))
                      for row in rows)
-
-
-def make_exports_section(exports, architecture_independent, metapackage):
-    parts = [make_empty_tag(name, attrs_dict)
-             for name, attrs_dict in exports]
-    if architecture_independent:
-        parts.append('<architecture_independent/>')
-    if metapackage:
-        parts.append('<metapackage/>')
-    parts = [indent(p, 2) for p in parts]
-    return '\n'.join(parts)
 
 
 def make_tag_from_row(name, row):
