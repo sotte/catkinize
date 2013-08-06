@@ -26,7 +26,6 @@ PACKAGE_TEMPLATE = """\
   <url type="website">%(website_url)s</url>
 %(bugtracker_part)s
 
-
   <!-- Dependencies which this package needs to build itself. -->
   <buildtool_depend>catkin</buildtool_depend>
 
@@ -90,49 +89,104 @@ def handle_manifest(package_path, version, dryrun=True):
     return True
 
 
-##############################################################################
+def create_package_xml_str(fields):
+    subs = {}
+    subs['maintainers_part'] = make_section('maintainer', fields["maintainers"])
+    subs['licenses_part'] = '\n'.join(
+        indent('<license>%s</license>' % l)
+        for l in fields["licenses"])
+
+    bugtracker_part = '<url type="bugtracker">%s</url>' % fields["bugtracker_url"]
+    if not fields["bugtracker_url"]:
+        bugtracker_part = comment_out(bugtracker_part)
+    subs['bugtracker_part'] = indent(bugtracker_part)
+
+    subs['authors_part'] = make_section('author', fields["authors"])
+    subs['build_depends_part'] = make_section('build_depend', fields["build_depends"])
+    subs['run_depends_part'] = make_section('run_depend', fields["run_depends"])
+    subs['test_depends_part'] = make_section('test_depend',
+                                             fields["test_depends"])
+    subs['replaces_part'] = make_section('replace', fields["replaces"])
+    subs['conflicts_part'] = make_section('conflict', fields["conflicts"])
+    subs['version'] = fields["version"]
+    subs['package_name'] = fields["package_name"]
+    subs['description'] = fields["description"]
+    subs['website_url'] = fields["website_url"]
+    subs['exports_part'] = make_exports_section(
+        fields["exports"],
+        fields["architecture_independent"],
+        fields["metapackage"]
+    )
+
+    return PACKAGE_TEMPLATE % subs
+
+
 def get_fields_from_manifest(manifest_xml_path):
+    """Extract all fields from the manifest.xml and return a dict with the
+    extracted fields.
+    """
 
     with open(manifest_xml_path) as f:
         manifest_str = f.read()
     manifest = ET.XML(manifest_str)
 
     # collect all fields
-    fields = {}
-
-    fields["description"] = xml_lib.xml_find(manifest, 'description').text.strip()
-
-    authors_str = xml_lib.xml_find(manifest, 'author').text
-    fields["authors"] = get_authors_field(authors_str)
-
-    licenses_str = xml_lib.xml_find(manifest, 'license').text
-    fields["licenses"] = SPACE_COMMA_RE.split(licenses_str)
-
-    fields["website_url"] = xml_lib.xml_find(manifest, 'url').text
-
-    fields["maintainers"] = [
-        (author, {'email': ''})
-        if isinstance(author, basestring)
-        else author for author in fields["authors"]]
-
-    depend_tags = manifest.findall('depend')
-    fields["depends"] = [d.attrib['package'] for d in depend_tags]
-
-    export_tags = xml_lib.xml_find(manifest, 'export').getchildren()
-    fields["exports"] = [(e.tag, e.attrib) for e in export_tags]
-
+    fields = {
+        "description": get_descrpition(manifest),
+        "authors": get_authors_field(manifest),
+        "licenses": get_licenses(manifest),
+        "website_url": get_website_url(manifest),
+        "maintainers": get_maintainers(manifest),
+        "depends": get_depend(manifest),
+        "exports": get_exports(manifest)
+    }
     return fields
 
 
-def get_authors_field(authors_str):
+##############################################################################
+def get_exports(manifest):
+    export_tags = xml_lib.xml_find(manifest, 'export').getchildren()
+    return [(e.tag, e.attrib) for e in export_tags]
+
+
+def get_depend(manifest):
+    depend_tags = manifest.findall('depend')
+    return [d.attrib['package'] for d in depend_tags]
+
+
+def get_maintainers(manifest):
+    authors = get_authors_field(manifest)
+    result = [
+        (author, {'email': ''})
+        if isinstance(author, basestring)
+        else author for author in authors
+    ]
+    return result
+
+
+def get_website_url(manifest):
+    return xml_lib.xml_find(manifest, 'url').text
+
+
+def get_licenses(manifest):
+    licenses_str = xml_lib.xml_find(manifest, 'license').text
+    return SPACE_COMMA_RE.split(licenses_str)
+
+
+def get_descrpition(manifest):
+    return xml_lib.xml_find(manifest, 'description').text.strip()
+
+
+def get_authors_field(manifest):
     """Extract author names and email addresses from free-form text in the
     <author> tag of manifest.xml.
 
-    >>> get_authors_field('Alice/alice@somewhere.bar, Bob')
-    [('Alice', {'email': 'alice@somewhere.bar'}), 'Bob']
-    >>> get_authors_field(None)
-    []
+    #>>> get_authors_field('Alice/alice@somewhere.bar, Bob')
+    #[('Alice', {'email': 'alice@somewhere.bar'}), 'Bob']
+    #>>> get_authors_field(None)
+    #[]
     """
+    authors_str = xml_lib.xml_find(manifest, 'author').text
     if authors_str is None:
         return []
 
@@ -145,6 +199,53 @@ def get_authors_field(authors_str):
             pair = (parts[0], dict(email=parts[1]))
             authors.append(pair)
     return authors
+
+
+##############################################################################
+def make_section(tag_name, rows):
+    """Make a string in XML format for a section with a given tag name."""
+    return '\n'.join(indent(make_tag_from_row(tag_name, row)) for row in rows)
+
+
+def make_tag_from_row(name, row):
+    """Make an XML tag from a row.
+
+    >>> make_tag_from_row('foo', 'bar')
+    '<foo>bar</foo>'
+    >>> make_tag_from_row('foo', ('bar', dict(baz='buzz')))
+    '<foo baz="buzz">bar</foo>'
+    """
+    if isinstance(row, basestring):
+        return make_tag(name, attrs_dict={}, contents=row)
+    if isinstance(row, tuple):
+        return make_tag(name, attrs_dict=row[1], contents=row[0])
+
+
+def comment_out(xml):
+    return '<!-- %s -->' % xml
+
+
+def dict_to_attrs(values):
+    """Convert a dictionary to a string containing attributes in XML format."""
+    return ' '.join('%s="%s"' % (k, v) for k, v in values.items())
+
+
+def make_tag(name, attrs_dict, contents):
+    return '<%s>%s</%s>' % (space_join([name, dict_to_attrs(attrs_dict)]),
+                            contents,
+                            name)
+
+
+def make_empty_tag(name, attrs_dict):
+    return '<%s/>' % space_join([name, dict_to_attrs(attrs_dict)])
+
+
+def space_join(words):
+    return ' '.join(w for w in words if w)
+
+
+def indent(strg, amount=1):
+    return (amount * '  ') + strg
 
 
 ##############################################################################
