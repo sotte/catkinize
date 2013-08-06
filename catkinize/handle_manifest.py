@@ -1,6 +1,14 @@
 from __future__ import print_function
 
+# standard library imports
 import os
+import re
+
+# related third party imports
+import xml.etree.ElementTree as ET
+
+# local application/library specific imports
+from catkinize import xml_lib
 
 
 ##############################################################################
