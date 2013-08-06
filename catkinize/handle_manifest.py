@@ -6,15 +6,10 @@ TODO Extract all doctest to proper unittests.
 
 ##############################################################################
 from __future__ import print_function
-
-# standard library imports
 import os
 import re
-
-# related third party imports
 import xml.etree.ElementTree as ET
 
-# local application/library specific imports
 from catkinize import xml_lib
 
 
@@ -33,7 +28,7 @@ PACKAGE_TEMPLATE = """\
 %(authors_part)s
 %(licenses_part)s
   <url type="website">%(website_url)s</url>
-%(bugtracker_part)s
+  %(bugtracker_part)s
 
   <!-- Dependencies which this package needs to build itself. -->
   <buildtool_depend>catkin</buildtool_depend>
@@ -82,9 +77,6 @@ def handle_manifest(package_path, version, dryrun=True):
     fields = get_fields_from_manifest(manifest_xml_path)
     fields["package_name"] = package_name
     fields["version"] = version
-    for k in fields:
-        print("%s --> %s" % (k, fields[k]))
-    print()
 
     # create manifest_xml_str
     package_xml_str = create_package_xml_str(fields)
@@ -96,11 +88,14 @@ def handle_manifest(package_path, version, dryrun=True):
             f.write(package_xml_str)
     print("Done")
 
+    # TODO move manifest.xml to manifest.xml.backup
+
     return True
 
 
 def create_package_xml_str(fields):
     """Create the xml_str from the given fields dict."""
+
     subs = {
         'maintainers_part': make_section('maintainer', fields["maintainers"]),
         'licenses_part': make_section("license", fields["licenses"]),
@@ -118,7 +113,7 @@ def create_package_xml_str(fields):
         'description': fields["description"],
         'website_url': fields["website_url"],
         # TODO "metapackage" # TODO "architecture_independent
-        'exports_part': make_exports_section( fields["exports"], False,  False),
+        'exports_part': make_exports_section(fields["exports"], False,  False),
     }
     return PACKAGE_TEMPLATE % subs
 
@@ -208,7 +203,7 @@ def get_authors_field(manifest):
 
 
 ##############################################################################
-# Make special section in the manifest.xml
+# Make special sections in the manifest.xml
 ##############################################################################
 def make_bugtrackre_section(bugtracker_url):
     """Make the bugtracker section.
