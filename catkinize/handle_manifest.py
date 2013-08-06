@@ -220,8 +220,25 @@ def get_authors_field(manifest):
 # TODO why don't we use the xml package to create the xml files?
 ##############################################################################
 def make_section(tag_name, rows):
-    """Make a string in XML format for a section with a given tag name."""
+    r"""Make a string in XML format for a section with a given tag name.
+
+    >>> make_section("test_depend", ["std_msgs"])
+    '  <test_depend>std_msgs</test_depend>'
+    >>> make_section("test_depend", ["std_msgs", "geo_msgs"])
+    '  <test_depend>std_msgs</test_depend>\n  <test_depend>geo_msgs</test_depend>'
+    """
     return '\n'.join(indent(make_tag_from_row(tag_name, row)) for row in rows)
+
+
+def make_section_commented(tag_name, rows):
+    r"""
+    >>> make_section_commented("test_depend", ["std_msgs"])
+    '  <!-- <test_depend>std_msgs</test_depend> -->'
+    >>> make_section_commented("test_depend", ["std_msgs", "geo_msgs"])
+    '  <!-- <test_depend>std_msgs</test_depend> -->\n  <!-- <test_depend>geo_msgs</test_depend> -->'
+    """
+    return '\n'.join(indent(comment_out(make_tag_from_row(tag_name, row)))
+                     for row in rows)
 
 
 def make_exports_section(exports, architecture_independent, metapackage):
