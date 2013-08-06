@@ -89,7 +89,12 @@ def handle_manifest(package_path, version, dryrun=True):
             f.write(package_xml_str)
     print("Done")
 
-    # TODO move manifest.xml to manifest.xml.backup
+    # Backup old manifest.xml
+    manifest_backup_path = manifest_xml_path + '.backup'
+    print("Backing up %s to %s." % (manifest_xml_path, manifest_backup_path))
+    if not dryrun:
+        os.rename(manifest_xml_path, manifest_backup_path)
+    print("Done")
 
     return True
 
