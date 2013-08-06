@@ -100,34 +100,26 @@ def handle_manifest(package_path, version, dryrun=True):
 
 
 def create_package_xml_str(fields):
-    subs = {}
-
-    subs['maintainers_part'] = make_section('maintainer', fields["maintainers"])
-
-    subs['licenses_part'] = '\n'.join(
-        indent('<license>%s</license>' % l)
-        for l in fields["licenses"])
-
-    bugtracker_part = '<url type="bugtracker">%s</url>' % fields["bugtracker_url"]
-    if not fields["bugtracker_url"]:
-        bugtracker_part = comment_out(bugtracker_part)
-    subs['bugtracker_part'] = indent(bugtracker_part)
-
-    subs['authors_part'] = make_section('author', fields["authors"])
-    subs['build_depends_part'] = make_section('build_depend', fields["depends"])
-    subs['run_depends_part'] = make_section('run_depend', fields["depends"])
-    subs['test_depends_part'] = make_section_commented("test_depend", fields["depends"])
-    subs['replaces_part'] = ""  # TODO make_section('replace', fields["replaces"])
-    subs['conflicts_part'] = ""  # TODO make_section('conflict', fields["conflicts"])
-    subs['version'] = fields["version"]
-    subs['package_name'] = fields["package_name"]
-    subs['description'] = fields["description"]
-    subs['website_url'] = fields["website_url"]
-    subs['exports_part'] = make_exports_section(
-        fields["exports"],
-        False,  # TODO "architecture_independent
-        False,  # TODO "metapackage"
-    )
+    """Create the xml_str from the given fields dict."""
+    subs = {
+        'maintainers_part': make_section('maintainer', fields["maintainers"]),
+        'licenses_part': make_section("license", fields["licenses"]),
+        'bugtracker_part': make_bugtrackre_section(fields["bugtracker_url"]),
+        'authors_part': make_section('author', fields["authors"]),
+        'build_depends_part': make_section('build_depend', fields["depends"]),
+        'run_depends_part': make_section('run_depend', fields["depends"]),
+        'test_depends_part': make_section_commented("test_depend", fields["depends"]),
+        # TODO make_section('replace', fields["replaces"])
+        'replaces_part': "",
+        # TODO make_section('conflict', fields["conflicts"])
+        'conflicts_part': "",
+        'version': fields["version"],
+        'package_name': fields["package_name"],
+        'description': fields["description"],
+        'website_url': fields["website_url"],
+        # TODO "metapackage" # TODO "architecture_independent
+        'exports_part': make_exports_section( fields["exports"], False,  False),
+    }
     return PACKAGE_TEMPLATE % subs
 
 
