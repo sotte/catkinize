@@ -93,7 +93,9 @@ def handle_manifest(package_path, version, dryrun=True):
 
 def create_package_xml_str(fields):
     subs = {}
+
     subs['maintainers_part'] = make_section('maintainer', fields["maintainers"])
+
     subs['licenses_part'] = '\n'.join(
         indent('<license>%s</license>' % l)
         for l in fields["licenses"])
@@ -116,8 +118,8 @@ def create_package_xml_str(fields):
     subs['website_url'] = fields["website_url"]
     subs['exports_part'] = make_exports_section(
         fields["exports"],
-        fields["architecture_independent"],
-        fields["metapackage"]
+        False,  # TODO "architecture_independent
+        False,  # TODO "metapackage"
     )
     return PACKAGE_TEMPLATE % subs
 
