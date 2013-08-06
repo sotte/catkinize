@@ -116,9 +116,9 @@ def create_package_xml_str(fields):
     subs['authors_part'] = make_section('author', fields["authors"])
     subs['build_depends_part'] = make_section('build_depend', fields["depends"])
     subs['run_depends_part'] = make_section('run_depend', fields["depends"])
-    subs['test_depends_part'] = make_section('test_depend', fields["depends"])
-    subs['replaces_part'] = None  # TODO make_section('replace', fields["replaces"])
-    subs['conflicts_part'] = None  # TODO make_section('conflict', fields["conflicts"])
+    subs['test_depends_part'] = make_section_commented("test_depend", fields["depends"])
+    subs['replaces_part'] = ""  # TODO make_section('replace', fields["replaces"])
+    subs['conflicts_part'] = ""  # TODO make_section('conflict', fields["conflicts"])
     subs['version'] = fields["version"]
     subs['package_name'] = fields["package_name"]
     subs['description'] = fields["description"]
