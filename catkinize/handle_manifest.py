@@ -62,7 +62,7 @@ def handle_manifest(package_path, version, dryrun=True):
     TODO: arguments
     """
     package_name = utils.get_package_name(package_path)
-    manifest_xml_path = utils.get_package_path(package_path)
+    manifest_xml_path = utils.get_manifest_xml_path(package_path)
     package_xml_path = utils.get_package_xml_path(package_path)
 
     # GUARDS
