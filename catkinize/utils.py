@@ -48,12 +48,12 @@ def get_makefile_path(package_path):
     return os.path.join(package_path, "Makefile")
 
 
-def get_package_path(package_path):
+def get_manifest_xml_path(package_path):
     """Return the path to the manifest.xml file for the given package_path.
 
-    >>> get_package_path("some/path/to/a/package/XYZ_package")
+    >>> get_manifest_xml_path("some/path/to/a/package/XYZ_package")
     'some/path/to/a/package/XYZ_package/manifest.xml'
-    >>> get_package_path("XYZ_package")
+    >>> get_manifest_xml_path("XYZ_package")
     'XYZ_package/manifest.xml'
     """
     return os.path.join(package_path, "manifest.xml")
